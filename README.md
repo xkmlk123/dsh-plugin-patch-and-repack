@@ -39,6 +39,28 @@ crash caused by stale integrity hashes, and a fifth attempt (plugin-only) that w
 | `scripts/asar_repack.py` | Repack with integrity recomputed, plus a full `--verify`. |
 | `scripts/patch_text.py` | Exact-text patching that aborts on a wrong match count. |
 | `scripts/restart_dsh.bat` | One-shot scheduled-task restart. |
+| `patches/wechat-sync-patch/` | A finished, ready-to-install example: patched `dsh-wechat-plugin` 0.46.0 `host.js`, its original, and an installer. |
+
+## Ready-made patch: WeChat ⇄ desktop sync
+
+`patches/wechat-sync-patch/` is the working end state of the case study, packaged so it
+can be dropped onto another machine instead of re-derived.
+
+It makes `dsh-wechat-plugin` do four things the stock plugin does not: desktop task
+completion pings the phone, an unanswered desktop prompt falls through to the phone
+after a grace period, a WeChat-bound session prompts both channels and honours whichever
+answers first, and the desktop card disappears once the phone answers.
+
+```sh
+python patches/wechat-sync-patch/scripts/install.py           # dry-run
+python patches/wechat-sync-patch/scripts/install.py --apply   # write
+python patches/wechat-sync-patch/scripts/install.py --check   # 7 markers must all pass
+python patches/wechat-sync-patch/scripts/install.py --rollback
+```
+
+Requires plugin version **0.46.0** exactly; the installer refuses any other version.
+The patch touches only `lib/host.js` — not `app.asar` — and carries no account data, so
+each machine still binds its own WeChat bot. Restart DSH after applying.
 
 ## Requirements
 
