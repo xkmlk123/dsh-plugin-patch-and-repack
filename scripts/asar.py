@@ -65,8 +65,8 @@ def body_of(raw: bytes, data_start: int, meta: dict) -> bytes:
 
 
 def cmd_ls(args: list[str]) -> None:
-    asar = args[0] if args else DEFAULT_ASAR
-    needle = args[1] if len(args) > 1 else ""
+    asar, rest = split_asar_arg(args)
+    needle = rest[0] if rest else ""
     raw = Path(asar).read_bytes()
     header, data_start = read_header(raw)
     rows = [(p, m) for p, m in walk(header) if needle in p]
